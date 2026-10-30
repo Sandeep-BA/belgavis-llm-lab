@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "belgavi_llm"
+version = "0.1.0"
+description = "Python code for LLM Engineering, Measured (Belgavi's AI Lab), Episode 1: tokens."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Sandeep Belgavi" }]
+dependencies = []
+
+# Extras are additive and opt-in. The base install and [cpu] never pull CUDA wheels.
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+# Lesson 1 (tokens): exact pins, checked against PyPI on 2026-10-22. tiktoken is only for the parity test.
+l01 = ["tokenizers==0.23.3", "tiktoken==0.14.0"]
+# Optional GPU throughput check in Lesson 1 (Colab or a local NVIDIA GPU).
+gpu = ["numpy>=1.26", "tokenizers>=0.21", "transformers>=4.50"]
+
+[project.scripts]
+belgavi-probe = "belgavi_llm.hardware:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+    "gpu: needs a CUDA GPU (skipped by default)",
+    "download: downloads models or data (skipped by default)",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

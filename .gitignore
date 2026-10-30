@@ -1,0 +1,21 @@
+# Build output
+java/target/
+__pycache__/
+*.pyc
+.venv*/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Models, datasets and run output never go in git
+models/
+runs/
+data/cache/
+*.gguf
+*.safetensors
+*.bin
+*.pt
+*.onnx
+
+# Secrets
+.env
