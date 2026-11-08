@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "belgavi_llm"
 version = "0.1.0"
-description = "Python code for LLM Engineering, Measured (Belgavi's AI Lab), Episode 1: tokens."
+description = "Python code for LLM Engineering, Measured (Belgavi's AI Lab), Episodes 1 (tokens) and 2 (what a transformer computes)."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
@@ -17,6 +17,9 @@ dependencies = []
 dev = ["pytest>=8", "ruff>=0.6"]
 # Lesson 1 (tokens): exact pins, checked against PyPI on 2026-10-22. tiktoken is only for the parity test.
 l01 = ["tokenizers==0.23.3", "tiktoken==0.14.0"]
+# Lesson 2 (transformer): exact pins, checked against PyPI on 2026-10-22. torch is installed separately
+# from the CPU-only index (see docs/02-transformer.md), so this extra never pulls CUDA wheels.
+l02 = ["numpy==2.4.6", "transformers==5.20.2"]
 # Optional GPU throughput check in Lesson 1 (Colab or a local NVIDIA GPU).
 gpu = ["numpy>=1.26", "tokenizers>=0.21", "transformers>=4.50"]
 

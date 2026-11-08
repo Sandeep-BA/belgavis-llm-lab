@@ -2,6 +2,20 @@
 
 **Real numbers from real runs, in Java and Python.** Companion code for the *LLM Engineering, Measured* series on [Belgavi's AI Lab](https://www.youtube.com/@belgaviai) on YouTube. By Sandeep Belgavi.
 
+## Episode 2: What a transformer actually computes (attention by hand, in Java and NumPy)
+
+A tiny model, small enough to check every number by hand: six words, vectors of four numbers, one attention head. For *the cat sat on the*, the Java and Python code print the same tables, stage by stage, and the tests in both languages assert the same fixed values.
+
+In this episode you will:
+
+- **Compute attention by hand:** three tokens and identity matrices give weights `[0.2483, 0.2483, 0.5035]` for the last token, and an output of `[0.7517, 0.7517]`.
+- **See the causal mask:** the future gets minus infinity before the softmax, so its weight is exactly 0.
+- **Read the output as a distribution:** the untrained toy gives the word *the* 0.2892, and every other word between 0.125 and 0.161.
+- **Learn that temperature is one division:** `softmax(logits / T)`; at T=0.25 the top word gets 0.7633, at T=4 only 0.1929.
+- **Check NumPy against PyTorch:** layer 0 of a tiny random-weight GPT-2 matches to about 1e-17.
+
+The full walkthrough, with every command and its output, is in **[docs/02-transformer.md](docs/02-transformer.md)**.
+
 [![Watch Episode 1](docs/img/ep01-cover.png)](https://www.youtube.com/watch?v=HPYAUCQLhBE)
 
 ## Episode 1: Kannada Was Always Ready. AI Wasn't (14x → 1.8x tokens)
@@ -46,7 +60,23 @@ mvn -B -ntp -q -f java/pom.xml compile exec:java \
   -Dexec.args="compare data/cache/l01/tokenizers"
 ```
 
-**No setup:** open [`notebooks/01-tokens.ipynb`](notebooks/01-tokens.ipynb) in Google Colab.
+**Episode 2, Python** (CPU-only PyTorch, so no CUDA download):
+
+```bash
+pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+pip install -e "python[l02]"
+python -m belgavi_llm.l02_transformer.demo   # every stage, the temperature table, the PyTorch check
+```
+
+**Episode 2, Java** (no ML library):
+
+```bash
+mvn -B -ntp -q -f java/pom.xml compile
+java -cp java/target/classes dev.belgavi.llm.l02.Lesson02Demo
+mvn -B -ntp -f java/pom.xml test -Dtest=AttentionTest
+```
+
+**No setup:** open [`notebooks/01-tokens.ipynb`](notebooks/01-tokens.ipynb) or [`notebooks/02-transformer.ipynb`](notebooks/02-transformer.ipynb) in Google Colab.
 
 Everything runs on CPU, offline after the first download, in under 10 minutes. See [docs/HARDWARE.md](docs/HARDWARE.md) if you want the optional GPU check.
 
@@ -54,9 +84,9 @@ Everything runs on CPU, offline after the first download, in under 10 minutes. S
 
 | # | Episode | Code |
 |---|---|---|
-| 1 | Tokens: what you are really paying for | **here now** |
-| 2 | The transformer, one layer at a time | coming with Episode 2 |
-| 3 | Data: dedup, leakage and splits | coming soon |
+| 1 | Tokens: what you are really paying for | [docs/01-tokens.md](docs/01-tokens.md) |
+| 2 | What a transformer actually computes | **here now**: [docs/02-transformer.md](docs/02-transformer.md) |
+| 3 | Data: dedup, leakage and splits | coming with Episode 3 |
 | 4 | LoRA and QLoRA on an 8 GB GPU | coming soon |
 | 5 | Evaluation you can trust | coming soon |
 | 6 | Quantization: int8, int4, GGUF | coming soon |
@@ -70,7 +100,8 @@ Each episode's code lands here on the day the episode goes live. **Watch or star
 ## Tests
 
 ```bash
-pip install -e "python[dev,l01]" && pytest -q python
+pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+pip install -e "python[dev,l01,l02]" && pytest -q python
 mvn -B -ntp -f java/pom.xml test
 ```
 
