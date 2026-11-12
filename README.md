@@ -2,6 +2,19 @@
 
 **Real numbers from real runs, in Java and Python.** Companion code for the *LLM Engineering, Measured* series on [Belgavi's AI Lab](https://www.youtube.com/@belgaviai) on YouTube. By Sandeep Belgavi.
 
+## Episode 3: Your eval is lying (data leakage, JSONL and dedup in Java and Python)
+
+Same data, same model, two scores. On 2,000 synthetic help-desk cases from *Belgavi's Book Store*, a tiny naive-Bayes classifier scores **82.7%** when the data is split by row and **71.6%** when it is split by customer (mean of 10 split seeds). About 11 points came from where the line was drawn, not from the model.
+
+In this episode you will:
+
+- **Write and validate chat-style JSONL:** the validator finds 80 bad rows out of 2,160 (40 with an empty message, 40 with an unknown role), each with its row id and the reason.
+- **Clean and de-duplicate:** Unicode NFKC, e-mail masking, then 40 exact and 40 near duplicates removed (MinHash + LSH, confirmed by word 3-gram Jaccard >= 0.7), leaving 2,000 rows from 230 customers.
+- **Split by source, not by row:** shuffle the customers, not the rows, so every customer lands on exactly one side.
+- **Catch a leak a text check misses:** with the row split, all 400 test rows come from customers seen in training, while exact and near-copy text overlap are both 0.
+
+The data is synthetic and built to behave like repeat-customer help-desk data, so the size of the gap depends on that design. The full walkthrough, with every command and its output, is in **[docs/03-data.md](docs/03-data.md)**.
+
 ## Episode 2: What a transformer actually computes (attention by hand, in Java and NumPy)
 
 A tiny model, small enough to check every number by hand: six words, vectors of four numbers, one attention head. For *the cat sat on the*, the Java and Python code print the same tables, stage by stage, and the tests in both languages assert the same fixed values.
@@ -76,7 +89,22 @@ java -cp java/target/classes dev.belgavi.llm.l02.Lesson02Demo
 mvn -B -ntp -f java/pom.xml test -Dtest=AttentionTest
 ```
 
-**No setup:** open [`notebooks/01-tokens.ipynb`](notebooks/01-tokens.ipynb) or [`notebooks/02-transformer.ipynb`](notebooks/02-transformer.ipynb) in Google Colab.
+**Episode 3, Python** (standard library only, no download):
+
+```bash
+pip install -e "python[dev]"
+pytest python/tests/test_l03_data.py                        # 13 passed
+python -m belgavi_llm.l03_data.demo --out data/cache/l03    # clean, dedup, split, and the leakage measurement
+```
+
+**Episode 3, Java** (Jackson; reads the `raw.jsonl` the Python demo wrote):
+
+```bash
+mvn -B -ntp -f java/pom.xml test -Dtest=Lesson03Test
+mvn -B -ntp -q -f java/pom.xml compile exec:java   -Dexec.mainClass=dev.belgavi.llm.l03.DatasetBuilder   -Dexec.args="data/cache/l03/raw.jsonl data/cache/l03/java"
+```
+
+**No setup:** open [`notebooks/01-tokens.ipynb`](notebooks/01-tokens.ipynb), [`notebooks/02-transformer.ipynb`](notebooks/02-transformer.ipynb) or [`notebooks/03-data.ipynb`](notebooks/03-data.ipynb) in Google Colab.
 
 Everything runs on CPU, offline after the first download, in under 10 minutes. See [docs/HARDWARE.md](docs/HARDWARE.md) if you want the optional GPU check.
 
@@ -85,9 +113,9 @@ Everything runs on CPU, offline after the first download, in under 10 minutes. S
 | # | Episode | Code |
 |---|---|---|
 | 1 | Tokens: what you are really paying for | [docs/01-tokens.md](docs/01-tokens.md) |
-| 2 | What a transformer actually computes | **here now**: [docs/02-transformer.md](docs/02-transformer.md) |
-| 3 | Data: dedup, leakage and splits | coming with Episode 3 |
-| 4 | LoRA and QLoRA on an 8 GB GPU | coming soon |
+| 2 | What a transformer actually computes | [docs/02-transformer.md](docs/02-transformer.md) |
+| 3 | Data: dedup, leakage and splits | **here now**: [docs/03-data.md](docs/03-data.md) |
+| 4 | LoRA and QLoRA on an 8 GB GPU | coming with Episode 4 |
 | 5 | Evaluation you can trust | coming soon |
 | 6 | Quantization: int8, int4, GGUF | coming soon |
 | 7 | GPU memory, measured | coming soon |

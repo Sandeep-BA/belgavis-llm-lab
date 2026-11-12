@@ -1,7 +1,7 @@
 # Author: Sandeep Belgavi
 PY ?= python3
 
-.PHONY: setup test test-java test-python lint probe l01-cpu l02-cpu
+.PHONY: setup test test-java test-python lint probe l01-cpu l02-cpu l03-cpu
 
 setup:
 	$(PY) -m pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
@@ -33,3 +33,8 @@ l02-cpu:
 	PYTHONPATH=python/src $(PY) -m belgavi_llm.l02_transformer.demo
 	mvn -B -ntp -q -f java/pom.xml compile
 	java -cp java/target/classes dev.belgavi.llm.l02.Lesson02Demo
+
+# Episode 3 (data): build, clean, dedup and split the synthetic dataset, measure the leak, then the same in Java. CPU only.
+l03-cpu:
+	PYTHONPATH=python/src $(PY) -m belgavi_llm.l03_data.demo --out data/cache/l03
+	mvn -B -ntp -q -f java/pom.xml compile exec:java -Dexec.mainClass=dev.belgavi.llm.l03.DatasetBuilder -Dexec.args="data/cache/l03/raw.jsonl data/cache/l03/java"
