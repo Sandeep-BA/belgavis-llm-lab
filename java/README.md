@@ -7,4 +7,6 @@ mvn -B -ntp -f java/pom.xml test
 mvn -B -ntp -q -f java/pom.xml compile exec:java -Dexec.mainClass=dev.belgavi.llm.l01.TokenCli -Dexec.args="compare data/cache/l01/tokenizers"
 mvn -B -ntp -q -f java/pom.xml compile && java -cp java/target/classes dev.belgavi.llm.l02.Lesson02Demo
 mvn -B -ntp -f java/pom.xml test -Dtest=AttentionTest
+mvn -B -ntp -q -f java/pom.xml compile exec:java -Dexec.mainClass=dev.belgavi.llm.l03.DatasetBuilder -Dexec.args="data/cache/l03/raw.jsonl data/cache/l03/java"
+mvn -B -ntp -f java/pom.xml test -Dtest=Lesson03Test
 ```

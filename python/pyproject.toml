@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "belgavi_llm"
 version = "0.1.0"
-description = "Python code for LLM Engineering, Measured (Belgavi's AI Lab), Episodes 1 (tokens) and 2 (what a transformer computes)."
+description = "Python code for LLM Engineering, Measured (Belgavi's AI Lab), Episodes 1 (tokens), 2 (what a transformer computes) and 3 (data: dedup, leakage and splits)."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
